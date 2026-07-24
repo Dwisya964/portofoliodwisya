@@ -324,17 +324,107 @@ footer{border-top:2px solid var(--border)}
 </div>
 <div id="toast"></div>
 <script>
+const API_URL = "https://https://script.google.com/macros/s/AKfycbyKkwq2d62_nwTX2wCnt4CC3rH6u_RwcYTls4gbGu-Uyfl6uYKJefdVl1BjnziZF-ef/exec";
 // ─── DATA ───────────────────────────────────────────────────────────────────
 // PERBAIKAN 1: aboutMe semula "aboutMe:," (syntax error fatal) → diperbaiki menjadi string kosong
 var _data={profile:{name:'Dwi Syafitri, S.Ak',title:'Finance & Accounting | Business Automation Enthusiast',aboutMe:'',email:'dwisyafitri82@gmail.com',phone:'0882-8936-9002',location:'Depok, Jawa Barat',cvUrl:'https://drive.google.com/uc?export=download&id=1QaS-Lmjg9x24c8k_y-Y-kLgKiu3fV37a',avatarUrl:'https://drive.google.com/uc?export=view&id=1DVJL_Y-euRrM6cx33bkb_54tqt9_31vY',skills:['ACCURATE SOFTWARE','ACCURATE POS','MICROSOFT EXCEL','MICROSOFT WORD','CANVA','APP SHEET','GOOGLE SCRIPT','GOOGLE SHEET','INVENTORY CONTROL','FINANCIAL REPORTING','DATA ANALYSIS']},projects:[],experiences:[{id:'exp-1',role:'SUPERVISOR FINANCE & ACCOUNTING',company:'PT Astro Custom Group',period:'JAN 2026 - Sekarang',responsibilities:['Mengontrol ketepatan waktu dan akurasi laporan keuangan unit Astro, Spectro, dan Bengkel','Mengembangkan strategi bundling SKU serta menetapkan harga jual berbasis perhitungan HPP','Melakukan pengawasan transaksi marketplace termasuk rekonsiliasi data']},{id:'exp-2',role:'STAFF FINANCE & ACCOUNTING',company:'PT Astro Custom Group',period:'JAN 2025 - DES 2025',responsibilities:['Mencocokkan saldo kas dan bank dengan mutasi rekening setiap periode','Mengelola seluruh proses procurement mulai dari permintaan pembelian hingga penerimaan barang','Menyusun laporan keuangan bulanan dan tahunan']}],educations:[{id:'edu-1',degree:'S1 Akuntansi',institution:'Universitas Pamulang',period:'2020 - 2024',description:'IPK: 3.75'},{id:'edu-2',degree:'TKJ (Teknik Komputer & Jaringan)',institution:'SMK Bina Rahayu',period:'2017 - 2020',description:''}]};
 var _chips=[];var _loggedIn=false;var _tt=null;
 var _ADMIN_EMAIL='dwisyafitri82@gmail.com';var _ADMIN_PASS='DWIADMIN@288';
 function g(id){return document.getElementById(id);}
-function _gasRun(){try{return(typeof google!=='undefined')&&google&&google.script&&google.script.run;}catch(e){return false;}}
-function toggleMenu(){var mb=g('mobile-menu'),hb=g('hamburger');var open=mb.classList.toggle('open');hb.classList.toggle('open',open);document.body.style.overflow=open?'hidden':'';}
-function closeMenu(){g('mobile-menu').classList.remove('open');g('hamburger').classList.remove('open');document.body.style.overflow='';}
-function loadData(){renderPublic();if(_loggedIn){renderDashboard();fillProfileForm();renderProjList();renderExpList();renderEduList();}if(!_gasRun())return;try{google.script.run.withSuccessHandler(function(d){if(d&&d.profile){_data=d;}renderPublic();if(_loggedIn){renderDashboard();fillProfileForm();renderProjList();renderExpList();renderEduList();}}).withFailureHandler(function(){}).getPortfolioData();}catch(e){}}
-if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',loadData);}else{loadData();}
+// 1. Tambahkan/Pastikan fungsi bridge gasCall ini ada di script Anda
+function gasCall(action, payload) {
+  // ⚠️ GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE APPS SCRIPT ANDA
+  const GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx...MASUKKAN_URL_WEB_APP_ANDA.../exec";
+
+  return new Promise((resolve) => {
+    if (typeof google !== 'undefined' && google.script && google.script.run) {
+      google.script.run
+        .withSuccessHandler((res) => {
+          if (typeof res === 'string') {
+            try { resolve(JSON.parse(res)); } catch(e) { resolve(res); }
+          } else {
+            resolve(res || { ok: true });
+          }
+        })
+        .withFailureHandler((err) => {
+          console.error('GAS Error:', err);
+          resolve({ ok: false, message: String(err) });
+        })
+        .handleAction(action, payload);
+    } else {
+      // Fallback Fetch untuk GitHub Pages / Web External
+      fetch(GAS_WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: action, payload: payload }),
+      })
+        .then((res) => res.json())
+        .then((data) => resolve(data))
+        .catch((err) => {
+          console.error('Fetch Error:', err);
+          resolve({ ok: false, message: err.message });
+        });
+    }
+  });
+}
+
+// 2. Fungsi Menu
+function toggleMenu() {
+  var mb = g('mobile-menu'), hb = g('hamburger');
+  var open = mb.classList.toggle('open');
+  hb.classList.toggle('open', open);
+  document.body.style.overflow = open ? 'hidden' : '';
+}
+
+function closeMenu() {
+  g('mobile-menu').classList.remove('open');
+  g('hamburger').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// 3. Fungsi loadData (Diperbaiki agar mendukung GitHub Pages & Google Apps Script)
+function loadData() {
+  // Render tampilan awal / lokal lebih dulu
+  renderPublic();
+  if (_loggedIn) {
+    renderDashboard();
+    fillProfileForm();
+    renderProjList();
+    renderExpList();
+    renderEduList();
+  }
+
+  // Panggil data dari backend menggunakan gasCall
+  gasCall('getPortfolioData')
+    .then(function(d) {
+      if (d && d.profile) {
+        _data = d;
+      } else if (d && typeof d === 'object') {
+        // Jaga-jaga jika struktur return langsung berupa object _data
+        _data = d;
+      }
+      
+      // Render ulang UI setelah data berhasil didapat dari server
+      renderPublic();
+      if (_loggedIn) {
+        renderDashboard();
+        fillProfileForm();
+        renderProjList();
+        renderExpList();
+        renderEduList();
+      }
+    })
+    .catch(function(err) {
+      console.error("Gagal mengambil data portfolio:", err);
+    });
+}
+
+// 4. Inisialisasi saat dokumen siap
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadData);
+} else {
+  loadData();
+}
 
  // ─── KONVERSI URL GOOGLE DRIVE ────────────────────────────────────────────
  // Mendukung /file/d/ID, /d/ID, ?id=ID, open?id=ID, uc?id=ID, dan thumbnail?id=ID.
@@ -407,7 +497,64 @@ function openAdmin(){g('admin-overlay').classList.add('open');if(!_loggedIn){g('
 function closeAdmin(){g('admin-overlay').classList.remove('open');}
 g('admin-overlay').addEventListener('click',function(e){if(e.target===this)closeAdmin();});
 var _lpass=g('l-pass');if(_lpass)_lpass.addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
-function doLogin(){var em=g('l-email').value.trim(),pw=g('l-pass').value;if(!em||!pw){toast('Email dan password wajib.',true);return;}toast('<span class="spinner"></span>Memeriksa...');function onOK(ok){if(ok){_loggedIn=true;g('login-section').style.display='none';g('admin-main').style.display='block';renderDashboard();fillProfileForm();renderProjList();renderExpList();renderEduList();initChips(_data.profile.skills||[]);toast('Selamat datang! 👋');}else{toast('Kredensial salah.',true);}}if(_gasRun()){try{google.script.run.withSuccessHandler(onOK).withFailureHandler(function(){onOK(em===_ADMIN_EMAIL&&pw===_ADMIN_PASS);}).checkLogin(em,pw);return;}catch(e){}}setTimeout(function(){onOK(em===_ADMIN_EMAIL&&pw===_ADMIN_PASS);},300);}
+function doLogin() {
+  var em = g('l-email').value.trim(),
+      pw = g('l-pass').value;
+
+  if (!em || !pw) {
+    toast('Email dan password wajib.', true);
+    return;
+  }
+
+  toast('<span class="spinner"></span>Memeriksa...');
+
+  function onOK(ok) {
+    if (ok) {
+      _loggedIn = true;
+      g('login-section').style.display = 'none';
+      g('admin-main').style.display = 'block';
+      renderDashboard();
+      fillProfileForm();
+      renderProjList();
+      renderExpList();
+      renderEduList();
+      initChips((_data && _data.profile && _data.profile.skills) || []);
+      toast('Selamat datang! 👋');
+    } else {
+      toast('Kredensial salah.', true);
+    }
+  }
+
+  // Menggunakan bridge gasCall
+  gasCall('checkLogin', { email: em, password: pw })
+    .then(function(res) {
+      // res bisa berupa boolean langsung, atau object { ok: true/false } / { success: true/false }
+      var isSuccess = false;
+      
+      if (typeof res === 'boolean') {
+        isSuccess = res;
+      } else if (res && typeof res === 'object') {
+        isSuccess = res.ok || res.success || false;
+      }
+
+      // Jika dari GAS/API berhasil terverifikasi
+      if (isSuccess) {
+        onOK(true);
+      } else {
+        // Fallback: Cek ke variabel lokal jika koneksi ke backend gagal / return false
+        var localAuth = (typeof _ADMIN_EMAIL !== 'undefined' && typeof _ADMIN_PASS !== 'undefined') && 
+                        (em === _ADMIN_EMAIL && pw === _ADMIN_PASS);
+        onOK(localAuth);
+      }
+    })
+    .catch(function(err) {
+      console.error('Login error:', err);
+      // Fallback jika fetch error
+      var localAuth = (typeof _ADMIN_EMAIL !== 'undefined' && typeof _ADMIN_PASS !== 'undefined') && 
+                      (em === _ADMIN_EMAIL && pw === _ADMIN_PASS);
+      onOK(localAuth);
+    });
+}
 function switchTab(n,btn){document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active');});if(btn)btn.classList.add('active');g('tab-'+n).classList.add('active');}
 
 // ─── CAROUSEL ────────────────────────────────────────────────────────────────
@@ -424,7 +571,67 @@ function renderDashboard(){var p=_data.profile;var avatarSrc=convertDriveUrl(p.a
 
 // ─── FORM PROFIL ──────────────────────────────────────────────────────────────
 function fillProfileForm(){var p=_data.profile;g('p-name').value=p.name||'';g('p-title').value=p.title||'';g('p-about').value=p.aboutMe||'';g('p-email').value=p.email||'';g('p-phone').value=p.phone||'';g('p-loc').value=p.location||'';g('p-avatar-url').value=p.avatarUrl||'';g('p-cv-url').value=p.cvUrl||'';g('p-avatar-b64').value='';g('p-cv-b64').value='';g('p-cv-fname').value='';var pr=g('p-avatar-preview');if(p.avatarUrl){pr.setAttribute('referrerpolicy','no-referrer');pr.src=convertDriveUrl(p.avatarUrl);pr.classList.add('show');}else{pr.classList.remove('show');}g('p-avatar-status').textContent='';g('p-cv-status').textContent='Tempel link atau upload CV';g('p-cv-status').className='photo-status';initChips(p.skills||[]);}
-function saveProfile(){var name=g('p-name').value.trim();if(!name){toast('Nama wajib.',true);return;}toast('<span class="spinner"></span>Menyimpan...');var aUrl=g('p-avatar-url').value.trim();if(aUrl.startsWith('📎'))aUrl='';var cUrl=g('p-cv-url').value.trim();if(cUrl.startsWith('📎'))cUrl='';var obj={name:name,title:g('p-title').value.trim(),aboutMe:g('p-about').value.trim(),email:g('p-email').value.trim(),phone:g('p-phone').value.trim(),location:g('p-loc').value.trim(),avatarUrl:aUrl,cvUrl:cUrl,avatarBase64:g('p-avatar-b64').value||null,cvBase64:g('p-cv-b64').value||null,cvFileName:g('p-cv-fname').value||null,skills:_chips.slice()};function onSuccess(r){if(r.success){Object.assign(_data.profile,obj);if(r.avatarUrl)_data.profile.avatarUrl=r.avatarUrl;if(r.cvUrl)_data.profile.cvUrl=r.cvUrl;renderPublic();renderDashboard();toast('✅ Profil disimpan!');}else{toast('Gagal.',true);}}if(!_gasRun()){Object.assign(_data.profile,obj);if(aUrl)_data.profile.avatarUrl=aUrl;if(cUrl)_data.profile.cvUrl=cUrl;renderPublic();renderDashboard();toast('✅ Tersimpan! (Preview)');return;}google.script.run.withSuccessHandler(onSuccess).withFailureHandler(function(e){toast('❌ '+e.message,true);}).saveProfile(obj);}
+function saveProfile() {
+  var name = g('p-name').value.trim();
+  if (!name) {
+    toast('Nama wajib.', true);
+    return;
+  }
+
+  toast('<span class="spinner"></span>Menyimpan...');
+
+  var aUrl = g('p-avatar-url').value.trim();
+  if (aUrl.startsWith('📎')) aUrl = '';
+  
+  var cUrl = g('p-cv-url').value.trim();
+  if (cUrl.startsWith('📎')) cUrl = '';
+
+  var obj = {
+    name: name,
+    title: g('p-title').value.trim(),
+    aboutMe: g('p-about').value.trim(),
+    email: g('p-email').value.trim(),
+    phone: g('p-phone').value.trim(),
+    location: g('p-loc').value.trim(),
+    avatarUrl: aUrl,
+    cvUrl: cUrl,
+    avatarBase64: g('p-avatar-b64').value || null,
+    cvBase64: g('p-cv-b64').value || null,
+    cvFileName: g('p-cv-fname').value || null,
+    skills: _chips.slice()
+  };
+
+  function onSuccess(r) {
+    if (r && (r.success || r.ok)) {
+      Object.assign(_data.profile, obj);
+      if (r.avatarUrl) _data.profile.avatarUrl = r.avatarUrl;
+      if (r.cvUrl) _data.profile.cvUrl = r.cvUrl;
+      
+      renderPublic();
+      renderDashboard();
+      toast('✅ Profil disimpan!');
+    } else {
+      toast('Gagal menyimpan profil.', true);
+    }
+  }
+
+  // Menggunakan gasCall untuk komunikasi ke Google Apps Script (GitHub Pages Friendly)
+  gasCall('saveProfile', obj)
+    .then(function(res) {
+      onSuccess(res);
+    })
+    .catch(function(e) {
+      console.error('Save Profile Error:', e);
+      // Fallback update tampilan sementara jika request gagal/offline
+      Object.assign(_data.profile, obj);
+      if (aUrl) _data.profile.avatarUrl = aUrl;
+      if (cUrl) _data.profile.cvUrl = cUrl;
+      
+      renderPublic();
+      renderDashboard();
+      toast('⚠️ Tersimpan di pratinjau lokal (Gagal ke server)', true);
+    });
+}
 
 // ─── CHIPS KEAHLIAN ───────────────────────────────────────────────────────────
 function initChips(arr){_chips=arr.slice();renderChips();}
@@ -432,7 +639,41 @@ function renderChips(){var area=g('skill-chips-area'),inp=g('chip-input');area.i
 function removeChip(i){_chips.splice(i,1);renderChips();}
 g('chip-input').addEventListener('keydown',function(e){var v=this.value.trim();if((e.key==='Enter'||e.key===',')&&v){e.preventDefault();if(!_chips.includes(v))_chips.push(v);renderChips();this.value='';}else if(e.key==='Backspace'&&!this.value&&_chips.length){_chips.pop();renderChips();}});
 g('chip-input').addEventListener('input',function(){if(this.value.endsWith(',')){var t=this.value.slice(0,-1).trim();if(t&&!_chips.includes(t))_chips.push(t);renderChips();this.value='';}});
-function saveSkillsOnly(){if(!_chips.length){toast('Belum ada keahlian.',true);return;}toast('<span class="spinner"></span>Menyimpan...');var obj=Object.assign({},_data.profile,{skills:_chips.slice(),avatarBase64:null,cvBase64:null});if(!_gasRun()){_data.profile.skills=_chips.slice();renderPublic();renderDashboard();toast('✅ Keahlian disimpan!');return;}google.script.run.withSuccessHandler(function(r){if(r.success){_data.profile.skills=_chips.slice();renderPublic();renderDashboard();toast('✅ Keahlian disimpan!');}else toast('Gagal.',true);}).withFailureHandler(function(e){toast('❌ '+e.message,true);}).saveProfile(obj);}
+function saveSkillsOnly() {
+  if (!_chips.length) {
+    toast('Belum ada keahlian.', true);
+    return;
+  }
+
+  toast('<span class="spinner"></span>Menyimpan...');
+
+  var obj = Object.assign({}, _data.profile, {
+    skills: _chips.slice(),
+    avatarBase64: null,
+    cvBase64: null
+  });
+
+  // Menggunakan gasCall agar kompatibel di GitHub Pages & Google Apps Script
+  gasCall('saveProfile', obj)
+    .then(function(r) {
+      if (r && (r.success || r.ok)) {
+        _data.profile.skills = _chips.slice();
+        renderPublic();
+        renderDashboard();
+        toast('✅ Keahlian disimpan!');
+      } else {
+        toast('Gagal menyimpan keahlian.', true);
+      }
+    })
+    .catch(function(e) {
+      console.error('Save Skills Error:', e);
+      // Fallback lokal jika fetch gagal/offline
+      _data.profile.skills = _chips.slice();
+      renderPublic();
+      renderDashboard();
+      toast('⚠️ Keahlian disimpan! (Preview lokal)', true);
+    });
+}
 
 // ─── FORM PROYEK ──────────────────────────────────────────────────────────────
 function renderProjList(){var list=g('proj-list');list.innerHTML='';if(!(_data.projects||[]).length){list.innerHTML='<div style="opacity:.6;font-style:italic">Belum ada proyek.</div>';return;}_data.projects.forEach(function(pr,i){var d=document.createElement('div');d.className='item-card';var ic=(pr.imageUrls||[]).filter(function(u){return u;}).length;d.innerHTML='<div class="item-card-info"><strong>'+esc(pr.nama)+'</strong><span>'+esc(pr.kategori)+' &bull; '+esc(pr.tahun)+' &bull; '+ic+' foto</span></div><div class="item-actions"><button class="icon-btn" onclick="openProjForm('+i+')">✐</button><button class="icon-btn del" onclick="deletePrj(\''+esc(pr.id)+'\',this)">×</button></div>';list.appendChild(d);});}
@@ -442,24 +683,264 @@ function renderProjList(){var list=g('proj-list');list.innerHTML='';if(!(_data.p
 function openProjForm(idx){var pr=idx!==null?_data.projects[idx]:null;g('proj-form-title').textContent=pr?'Edit Proyek':'Tambah Proyek Baru';g('pr-id').value=pr?pr.id:'';g('pr-nama').value=pr?pr.nama:'';g('pr-kat').value=pr?pr.kategori:'Automation';g('pr-desc').value=pr?pr.deskripsi:'';g('pr-tools').value=pr?pr.tools:'';g('pr-tahun').value=pr?pr.tahun:new Date().getFullYear();g('pr-status').value=pr?pr.status:'Selesai';g('pr-demo').value=pr?(pr.demo||''):'';for(var i=0;i<3;i++){var url=(pr&&pr.imageUrls&&pr.imageUrls[i])||'';g('pr-url-'+i).value=url;g('pr-b64-'+i).value='';g('pr-status-'+i).textContent='';g('pr-status-'+i).className='slot-status';var pv=g('pr-prev-'+i);if(url){pv.src=convertDriveUrl(url);/* ← PERBAIKAN: konversi Drive URL sebelum set src */pv.setAttribute('referrerpolicy','no-referrer');pv.classList.add('show');pv.style.display='block';}else{pv.src='';pv.classList.remove('show');pv.style.display='none';}}g('proj-form').style.display='block';g('proj-form').scrollIntoView({behavior:'smooth',block:'nearest'});}
 
 function cancelProjForm(){g('proj-form').style.display='none';}
-function saveProject(){var nama=g('pr-nama').value.trim();if(!nama){toast('Nama proyek wajib.',true);return;}toast('<span class="spinner"></span>Menyimpan...');var urls=[],b64s=[];for(var i=0;i<3;i++){var uv=g('pr-url-'+i).value.trim();urls.push(uv.startsWith('📎')?'':uv);b64s.push(g('pr-b64-'+i).value||null);}var obj={id:g('pr-id').value||null,nama:nama,kategori:g('pr-kat').value,deskripsi:g('pr-desc').value.trim(),tools:g('pr-tools').value.trim(),tahun:g('pr-tahun').value.trim(),status:g('pr-status').value,demo:g('pr-demo').value.trim(),github:'',imageUrls:urls,imageBase64s:b64s};if(!_gasRun()){if(obj.id){var idx=_data.projects.findIndex(function(p){return p.id===obj.id;});if(idx>=0)_data.projects[idx]=obj;}else{obj.id=Date.now().toString();_data.projects.push(obj);}cancelProjForm();renderPublic();renderProjList();renderDashboard();toast('✅ Proyek disimpan!');return;}google.script.run.withSuccessHandler(function(r){if(r.success){cancelProjForm();loadData();toast('✅ Proyek disimpan!');}else toast('Gagal.',true);}).withFailureHandler(function(e){toast('❌ '+e.message,true);}).saveProject(obj);}
-function deletePrj(id,btn){if(!confirm('Hapus proyek ini?'))return;btn.disabled=true;if(!_gasRun()){_data.projects=_data.projects.filter(function(p){return p.id!==id;});renderPublic();renderProjList();renderDashboard();toast('Dihapus.');return;}google.script.run.withSuccessHandler(function(r){if(r.success){loadData();toast('Dihapus.');}else{toast('Gagal.',true);btn.disabled=false;}}).withFailureHandler(function(e){toast('Error.',true);btn.disabled=false;}).deleteProject(id);}
+// 1. Fungsi Simpan Proyek
+function saveProject() {
+  var nama = g('pr-nama').value.trim();
+  if (!nama) {
+    toast('Nama proyek wajib.', true);
+    return;
+  }
 
+  toast('<span class="spinner"></span>Menyimpan...');
+
+  var urls = [], b64s = [];
+  for (var i = 0; i < 3; i++) {
+    var uv = g('pr-url-' + i).value.trim();
+    urls.push(uv.startsWith('📎') ? '' : uv);
+    b64s.push(g('pr-b64-' + i).value || null);
+  }
+
+  var obj = {
+    id: g('pr-id').value || null,
+    nama: nama,
+    kategori: g('pr-kat').value,
+    deskripsi: g('pr-desc').value.trim(),
+    tools: g('pr-tools').value.trim(),
+    tahun: g('pr-tahun').value.trim(),
+    status: g('pr-status').value,
+    demo: g('pr-demo').value.trim(),
+    github: '',
+    imageUrls: urls,
+    imageBase64s: b64s
+  };
+
+  gasCall('saveProject', obj)
+    .then(function(r) {
+      if (r && (r.success || r.ok)) {
+        cancelProjForm();
+        loadData(); // Ambil ulang data terbaru dari backend
+        toast('✅ Proyek disimpan!');
+      } else {
+        toast('Gagal menyimpan proyek.', true);
+      }
+    })
+    .catch(function(e) {
+      console.error('Save Project Error:', e);
+      // Fallback update lokal jika fetch gagal/offline
+      if (obj.id) {
+        var idx = _data.projects.findIndex(function(p) { return p.id === obj.id; });
+        if (idx >= 0) _data.projects[idx] = obj;
+      } else {
+        obj.id = Date.now().toString();
+        _data.projects.push(obj);
+      }
+      cancelProjForm();
+      renderPublic();
+      renderProjList();
+      renderDashboard();
+      toast('⚠️ Tersimpan di pratinjau lokal (Gagal ke server)', true);
+    });
+}
+
+// 2. Fungsi Hapus Proyek
+function deletePrj(id, btn) {
+  if (!confirm('Hapus proyek ini?')) return;
+  if (btn) btn.disabled = true;
+
+  toast('<span class="spinner"></span>Menghapus...');
+
+  gasCall('deleteProject', { id: id })
+    .then(function(r) {
+      if (r && (r.success || r.ok)) {
+        loadData(); // Ambil ulang data terbaru dari backend
+        toast('Dihapus.');
+      } else {
+        toast('Gagal menghapus.', true);
+        if (btn) btn.disabled = false;
+      }
+    })
+    .catch(function(e) {
+      console.error('Delete Project Error:', e);
+      // Fallback hapus lokal jika offline
+      _data.projects = _data.projects.filter(function(p) { return p.id !== id; });
+      renderPublic();
+      renderProjList();
+      renderDashboard();
+      toast('Dihapus dari pratinjau lokal.');
+      if (btn) btn.disabled = false;
+    });
+}
 // ─── FORM PENGALAMAN ──────────────────────────────────────────────────────────
 function addRespItem(listId,val){var list=g(listId);var row=document.createElement('div');row.className='resp-item';row.innerHTML='<input type="text" placeholder="Tanggung jawab..." value="'+(val?esc(val):'')+'"/><button type="button" onclick="this.parentNode.remove()">×</button>';list.appendChild(row);row.querySelector('input').focus();}
 function getRespValues(listId){var a=[];g(listId).querySelectorAll('input').forEach(function(i){var v=i.value.trim();if(v)a.push(v);});return a;}
 function renderExpList(){var list=g('exp-list');list.innerHTML='';if(!(_data.experiences||[]).length){list.innerHTML='<div style="opacity:.6;font-style:italic">Belum ada pengalaman.</div>';return;}_data.experiences.forEach(function(ex,i){var d=document.createElement('div');d.className='item-card';d.innerHTML='<div class="item-card-info"><strong>'+esc(ex.role)+'</strong><span>'+esc(ex.company)+' &bull; '+esc(ex.period)+'</span></div><div class="item-actions"><button class="icon-btn" onclick="openExpForm('+i+')">✐</button><button class="icon-btn del" onclick="delExp(\''+esc(ex.id)+'\',this)">×</button></div>';list.appendChild(d);});}
 function openExpForm(idx){var ex=idx!==null?_data.experiences[idx]:null;g('exp-form-title').textContent=ex?'Edit Pengalaman':'Tambah Pengalaman';g('ex-id').value=ex?ex.id:'';g('ex-role').value=ex?ex.role:'';g('ex-company').value=ex?ex.company:'';g('ex-period').value=ex?ex.period:'';var rl=g('exp-resp-list');rl.innerHTML='';(ex?ex.responsibilities:[]).forEach(function(r){addRespItem('exp-resp-list',r);});if(!ex||!(ex.responsibilities||[]).length)addRespItem('exp-resp-list','');g('exp-form').style.display='block';g('exp-form').scrollIntoView({behavior:'smooth',block:'nearest'});}
 function cancelExpForm(){g('exp-form').style.display='none';}
-function saveExperience(){var role=g('ex-role').value.trim(),company=g('ex-company').value.trim();if(!role){toast('Jabatan wajib.',true);return;}if(!company){toast('Perusahaan wajib.',true);return;}toast('<span class="spinner"></span>Menyimpan...');var obj={id:g('ex-id').value||null,role:role,company:company,period:g('ex-period').value.trim(),responsibilities:getRespValues('exp-resp-list')};if(!_gasRun()){if(obj.id){var idx=_data.experiences.findIndex(function(e){return e.id===obj.id;});if(idx>=0)_data.experiences[idx]=obj;}else{obj.id=Date.now().toString();_data.experiences.push(obj);}cancelExpForm();renderPublic();renderExpList();renderDashboard();toast('✅ Tersimpan!');return;}google.script.run.withSuccessHandler(function(r){if(r.success){cancelExpForm();loadData();toast('✅ Tersimpan!');}else toast('Gagal.',true);}).withFailureHandler(function(e){toast('❌ '+e.message,true);}).saveExperience(obj);}
-function delExp(id,btn){if(!confirm('Hapus?'))return;btn.disabled=true;if(!_gasRun()){_data.experiences=_data.experiences.filter(function(e){return e.id!==id;});renderPublic();renderExpList();renderDashboard();toast('Dihapus.');return;}google.script.run.withSuccessHandler(function(r){if(r.success){loadData();toast('Dihapus.');}else{toast('Gagal.',true);btn.disabled=false;}}).withFailureHandler(function(e){toast('Error.',true);btn.disabled=false;}).deleteExperience(id);}
+// 1. Fungsi Simpan Pengalaman Kerja
+function saveExperience() {
+  var role = g('ex-role').value.trim(),
+      company = g('ex-company').value.trim();
+
+  if (!role) {
+    toast('Jabatan wajib.', true);
+    return;
+  }
+  if (!company) {
+    toast('Perusahaan wajib.', true);
+    return;
+  }
+
+  toast('<span class="spinner"></span>Menyimpan...');
+
+  var obj = {
+    id: g('ex-id').value || null,
+    role: role,
+    company: company,
+    period: g('ex-period').value.trim(),
+    responsibilities: getRespValues('exp-resp-list')
+  };
+
+  gasCall('saveExperience', obj)
+    .then(function(r) {
+      if (r && (r.success || r.ok)) {
+        cancelExpForm();
+        loadData(); // Memuat ulang data dari backend
+        toast('✅ Tersimpan!');
+      } else {
+        toast('Gagal menyimpan pengalaman.', true);
+      }
+    })
+    .catch(function(e) {
+      console.error('Save Experience Error:', e);
+      // Fallback lokal jika fetch gagal
+      if (obj.id) {
+        var idx = _data.experiences.findIndex(function(e) { return e.id === obj.id; });
+        if (idx >= 0) _data.experiences[idx] = obj;
+      } else {
+        obj.id = Date.now().toString();
+        _data.experiences.push(obj);
+      }
+      cancelExpForm();
+      renderPublic();
+      renderExpList();
+      renderDashboard();
+      toast('⚠️ Tersimpan di pratinjau lokal (Gagal ke server)', true);
+    });
+}
+
+// 2. Fungsi Hapus Pengalaman Kerja
+function delExp(id, btn) {
+  if (!confirm('Hapus?')) return;
+  if (btn) btn.disabled = true;
+
+  toast('<span class="spinner"></span>Menghapus...');
+
+  gasCall('deleteExperience', { id: id })
+    .then(function(r) {
+      if (r && (r.success || r.ok)) {
+        loadData(); // Memuat ulang data dari backend
+        toast('Dihapus.');
+      } else {
+        toast('Gagal menghapus.', true);
+        if (btn) btn.disabled = false;
+      }
+    })
+    .catch(function(e) {
+      console.error('Delete Experience Error:', e);
+      // Fallback lokal jika fetch gagal
+      _data.experiences = _data.experiences.filter(function(e) { return e.id !== id; });
+      renderPublic();
+      renderExpList();
+      renderDashboard();
+      toast('Dihapus dari pratinjau lokal.');
+      if (btn) btn.disabled = false;
+    });
+}
 
 // ─── FORM PENDIDIKAN ──────────────────────────────────────────────────────────
 function renderEduList(){var list=g('edu-list');list.innerHTML='';if(!(_data.educations||[]).length){list.innerHTML='<div style="opacity:.6;font-style:italic">Belum ada pendidikan.</div>';return;}_data.educations.forEach(function(ed,i){var d=document.createElement('div');d.className='item-card';d.innerHTML='<div class="item-card-info"><strong>'+esc(ed.degree)+'</strong><span>'+esc(ed.institution)+' &bull; '+esc(ed.period)+'</span></div><div class="item-actions"><button class="icon-btn" onclick="openEduForm('+i+')">✐</button><button class="icon-btn del" onclick="delEdu(\''+esc(ed.id)+'\',this)">×</button></div>';list.appendChild(d);});}
 function openEduForm(idx){var ed=idx!==null?_data.educations[idx]:null;g('edu-form-title').textContent=ed?'Edit Pendidikan':'Tambah Pendidikan';g('ed-id').value=ed?ed.id:'';g('ed-degree').value=ed?ed.degree:'';g('ed-inst').value=ed?ed.institution:'';g('ed-period').value=ed?ed.period:'';g('ed-desc').value=ed?(ed.description||''):'';g('edu-form').style.display='block';g('edu-form').scrollIntoView({behavior:'smooth',block:'nearest'});}
 function cancelEduForm(){g('edu-form').style.display='none';}
-function saveEducation(){var degree=g('ed-degree').value.trim(),inst=g('ed-inst').value.trim();if(!degree){toast('Gelar wajib.',true);return;}if(!inst){toast('Institusi wajib.',true);return;}toast('<span class="spinner"></span>Menyimpan...');var obj={id:g('ed-id').value||null,degree:degree,institution:inst,period:g('ed-period').value.trim(),description:g('ed-desc').value.trim()};if(!_gasRun()){if(obj.id){var idx=_data.educations.findIndex(function(e){return e.id===obj.id;});if(idx>=0)_data.educations[idx]=obj;}else{obj.id=Date.now().toString();_data.educations.push(obj);}cancelEduForm();renderPublic();renderEduList();renderDashboard();toast('✅ Tersimpan!');return;}google.script.run.withSuccessHandler(function(r){if(r.success){cancelEduForm();loadData();toast('✅ Tersimpan!');}else toast('Gagal.',true);}).withFailureHandler(function(e){toast('❌ '+e.message,true);}).saveEducation(obj);}
-function delEdu(id,btn){if(!confirm('Hapus?'))return;btn.disabled=true;if(!_gasRun()){_data.educations=_data.educations.filter(function(e){return e.id!==id;});renderPublic();renderEduList();renderDashboard();toast('Dihapus.');return;}google.script.run.withSuccessHandler(function(r){if(r.success){loadData();toast('Dihapus.');}else{toast('Gagal.',true);btn.disabled=false;}}).withFailureHandler(function(e){toast('Error.',true);btn.disabled=false;}).deleteEducation(id);}
+// 1. Fungsi Simpan Pendidikan
+function saveEducation() {
+  var degree = g('ed-degree').value.trim(),
+      inst = g('ed-inst').value.trim();
+
+  if (!degree) {
+    toast('Gelar wajib.', true);
+    return;
+  }
+  if (!inst) {
+    toast('Institusi wajib.', true);
+    return;
+  }
+
+  toast('<span class="spinner"></span>Menyimpan...');
+
+  var obj = {
+    id: g('ed-id').value || null,
+    degree: degree,
+    institution: inst,
+    period: g('ed-period').value.trim(),
+    description: g('ed-desc').value.trim()
+  };
+
+  gasCall('saveEducation', obj)
+    .then(function(r) {
+      if (r && (r.success || r.ok)) {
+        cancelEduForm();
+        loadData(); // Ambil data terbaru dari backend
+        toast('✅ Tersimpan!');
+      } else {
+        toast('Gagal menyimpan pendidikan.', true);
+      }
+    })
+    .catch(function(e) {
+      console.error('Save Education Error:', e);
+      // Fallback lokal jika fetch gagal/offline
+      if (obj.id) {
+        var idx = _data.educations.findIndex(function(e) { return e.id === obj.id; });
+        if (idx >= 0) _data.educations[idx] = obj;
+      } else {
+        obj.id = Date.now().toString();
+        _data.educations.push(obj);
+      }
+      cancelEduForm();
+      renderPublic();
+      renderEduList();
+      renderDashboard();
+      toast('⚠️ Tersimpan di pratinjau lokal (Gagal ke server)', true);
+    });
+}
+
+// 2. Fungsi Hapus Pendidikan
+function delEdu(id, btn) {
+  if (!confirm('Hapus?')) return;
+  if (btn) btn.disabled = true;
+
+  toast('<span class="spinner"></span>Menghapus...');
+
+  gasCall('deleteEducation', { id: id })
+    .then(function(r) {
+      if (r && (r.success || r.ok)) {
+        loadData(); // Ambil data terbaru dari backend
+        toast('Dihapus.');
+      } else {
+        toast('Gagal menghapus.', true);
+        if (btn) btn.disabled = false;
+      }
+    })
+    .catch(function(e) {
+      console.error('Delete Education Error:', e);
+      // Fallback lokal jika fetch gagal/offline
+      _data.educations = _data.educations.filter(function(e) { return e.id !== id; });
+      renderPublic();
+      renderEduList();
+      renderDashboard();
+      toast('Dihapus dari pratinjau lokal.');
+      if (btn) btn.disabled = false;
+    });
+}
 
 // ─── UTILITAS ─────────────────────────────────────────────────────────────────
 function toast(msg,isErr){var el=g('toast');el.innerHTML=msg;el.style.background=isErr?'#dc2626':'#2563eb';el.style.opacity='1';el.style.transform='translateY(0)';clearTimeout(_tt);_tt=setTimeout(function(){el.style.opacity='0';el.style.transform='translateY(12px)';},4000);}
