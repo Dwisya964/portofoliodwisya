@@ -18,8 +18,78 @@ const CONFIG = {
   FOLDER_ID: ''       // Kosongkan untuk memakai My Drive.
 };
 
+// ==========================================
+// PINTU MASUK UNTUK REQUEST DARI GITHUB PAGES
+// ==========================================
+
+function doPost(e) {
+  try {
+    // 1. Baca data JSON yang dikirim oleh fetch dari GitHub Pages
+    var requestData = JSON.parse(e.postData.contents);
+    var action = requestData.action;
+    var payload = requestData.payload;
+
+    // 2. Jalankan fungsi sesuai perintah (action)
+    var result = handleAction(action, payload);
+
+    // 3. Kembalikan balasan dalam format JSON
+    return ContentService.createTextOutput(JSON.stringify(result))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    // Jika terjadi error di server
+    return ContentService.createTextOutput(JSON.stringify({ 
+      success: false, 
+      ok: false, 
+      message: error.toString() 
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// ROUTER UTAMA (Memilih fungsi backend yang akan dijalankan)
+function handleAction(action, payload) {
+  switch (action) {
+    case 'getPortfolioData':
+      return getPortfolioData();
+
+    case 'checkLogin':
+      // Mendukung jika payload dikirim sebagai objek {email, password}
+      if (typeof payload === 'object' && payload !== null) {
+        return checkLogin(payload.email, payload.password);
+      }
+      return checkLogin(payload);
+
+    case 'saveProfile':
+      return saveProfile(payload);
+
+    case 'saveProject':
+      return saveProject(payload);
+
+    case 'deleteProject':
+      // Mendukung jika ID dikirim langsung atau via objek {id: ...}
+      var projId = (typeof payload === 'object' && payload !== null) ? payload.id : payload;
+      return deleteProject(projId);
+
+    case 'saveExperience':
+      return saveExperience(payload);
+
+    case 'deleteExperience':
+      var expId = (typeof payload === 'object' && payload !== null) ? payload.id : payload;
+      return deleteExperience(expId);
+
+    case 'saveEducation':
+      return saveEducation(payload);
+
+    case 'deleteEducation':
+      var eduId = (typeof payload === 'object' && payload !== null) ? payload.id : payload;
+      return deleteEducation(eduId);
+
+    default:
+      return { success: false, ok: false, message: 'Action tidak dikenal: ' + action };
+  }
+}
 function doGet() {
-  return HtmlService.createTemplateFromFile('Index')
+  return HtmlService.createTemplateFromFile('index')
     .evaluate()
     .setTitle('Portofolio Dwi Syafitri')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
