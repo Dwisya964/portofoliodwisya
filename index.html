@@ -4,170 +4,225 @@ HTML
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
-  <title>Portofolio Dwi Syafitri — Design 05: Paper Blue</title>
+  <title>Portofolio Dwi Syafitri</title>
 
   <!-- META TAG PWA & LAYAR UTAMA HP -->
   <meta name="application-name" content="Portfolio Dwi"/>
   <meta name="apple-mobile-web-app-title" content="Portfolio Dwi"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="mobile-web-app-capable" content="yes"/>
-  <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-  <meta name="theme-color" content="#2557a7"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="theme-color" content="#0d0b18"/>
 
-  <!-- LOGO BROWSER (FAVICON & ICON HP) -->
-  <!-- Menggunakan SVG Data URI sebagai Logo Default Browser -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='128' fill='%232557a7'/><path d='M160 140h100c60 0 100 35 100 85s-40 85-100 85H220v102H160V140zm60 50v70h40c30 0 50-15 50-35s-20-35-50-35h-40z' fill='%23ffffff'/><circle cx='380' cy='380' r='35' fill='%234b83d1'/></svg>"/>
-  <link rel="apple-touch-icon" href="logotoko.png"/>
-  
-  <!-- MANIFEST UNTUK TOMBOL INSTALL & PINTASAN HP -->
-  <link rel="manifest" href="manifest.json"/>
+  <!-- LOGO BROWSER (FAVICON & APPLE TOUCH ICON) -->
+  <link rel="icon" type="image/png" href="./logotoko.png"/>
+  <link rel="apple-touch-icon" href="./logotoko.png"/>
+  <link rel="manifest" href="./manifest.json"/>
 
-  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=Cormorant+Garamond:wght@600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=Cormorant+Garamond:wght@600;700&display=swap" rel="stylesheet"/>
 
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    :root{--accent:#7c3aed;--accent2:#a78bfa;--tx:#f1f5f9;--st:#94a3b8;--bg:#0a0a1a;--surface:#141428;--border:#2d2d4e;--admin-bg:#1a1a2e;--admin-hd:#0a0a1a;--max-w:960px}
+    :root{
+      --accent:#2557a7;
+      --accent2:#4b83d1;
+      --tx:#1f3150;
+      --st:#62728c;
+      --bg:#edf4fb;
+      --surface:#ffffff;
+      --border:#b8cce2;
+      --max-w:960px;
+    }
     html{scroll-behavior:smooth}
-    body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.7;overflow-x:hidden;background-image:radial-gradient(circle,rgba(124,58,237,.08) 1px,transparent 1px);background-size:28px 28px}
+    body{
+      font-family:'Work Sans',sans-serif;
+      background-color:var(--bg);
+      color:var(--tx);
+      font-size:15px;
+      line-height:1.7;
+      overflow-x:hidden;
+      background-image:linear-gradient(135deg,rgba(37,87,167,.035) 25%,transparent 25%),linear-gradient(315deg,rgba(75,131,209,.035) 25%,transparent 25%);
+      background-position:0 0,12px 12px;
+      background-size:24px 24px;
+    }
     a{color:var(--accent2);text-decoration:none}
-    
-    #nav{position:sticky;top:0;z-index:300;background:rgba(10,10,26,.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);height:64px;display:flex;align-items:center}
-    .nav-inner{max-width:var(--max-w);margin:0 auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;width:100%}
-    .nav-brand{display:flex;align-items:center;gap:.6rem;font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:800;color:var(--tx)}
-    .nav-logo-svg{width:32px;height:32px;border-radius:6px;box-shadow:0 2px 6px rgba(0,0,0,.15)}
-    .brand-hi{color:var(--accent2)}
-    
-    #nav-links{display:flex;gap:.1rem}
-    #nav-links a{color:var(--st);padding:.4rem .7rem;border-radius:6px;font-size:.78rem;font-weight:500;transition:all .15s;white-space:nowrap}
+
+    /* NAVBAR */
+    #nav{
+      position:sticky;top:0;z-index:300;
+      background:rgba(237,244,251,.95);
+      backdrop-filter:blur(16px);
+      border-bottom:2px solid var(--border);
+      height:64px;
+      display:flex;align-items:center;
+    }
+    .nav-inner{
+      max-width:var(--max-w);margin:0 auto;padding:0 1.5rem;
+      display:flex;align-items:center;justify-content:space-between;width:100%;
+    }
+    .nav-brand{
+      display:flex;align-items:center;gap:.6rem;
+      font-family:'Cormorant Garamond',serif;
+      font-size:1.3rem;font-weight:700;color:var(--tx);
+      text-decoration:none;
+    }
+    .nav-logo-img{
+      width:36px;height:36px;border-radius:8px;
+      object-fit:cover;border:1px solid var(--border);
+      box-shadow:0 2px 6px rgba(0,0,0,.08);
+    }
+    .brand-hi{color:var(--accent)}
+
+    #nav-links{display:flex;gap:.2rem}
+    #nav-links a{
+      color:var(--st);padding:.4rem .8rem;border-radius:6px;
+      font-size:.85rem;font-weight:500;transition:all .15s;white-space:nowrap;
+    }
     #nav-links a:hover,#nav-links a.active{background:var(--accent);color:#fff}
+    
     .nav-right{display:flex;align-items:center;gap:.5rem}
-    #admin-btn{background:var(--accent);color:#fff;border:none;padding:.4rem 1rem;border-radius:6px;cursor:pointer;font-size:.78rem;font-weight:600}
-    
-    #hamburger{display:none;flex-direction:column;justify-content:space-between;width:26px;height:20px;background:none;border:none;cursor:pointer}
-    #hamburger span{display:block;height:2px;background:var(--tx);border-radius:2px;transition:all .25s}
-    
-    #hero{position:relative;min-height:85vh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg);border-bottom:2px solid var(--border)}
-    #hero::before{content:'DS';position:absolute;font-family:'Syne',sans-serif;font-size:28vw;font-weight:800;color:rgba(124,58,237,.04);line-height:1;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;white-space:nowrap;letter-spacing:-.05em}
-    .hero-inner{max-width:var(--max-w);margin:0 auto;padding:5rem 2rem;text-align:center;position:relative;z-index:1;width:100%}
-    .hero-eyebrow{display:flex;align-items:center;justify-content:center;gap:1rem;margin-bottom:2.5rem}
-    .hero-eyebrow-line{flex:1;max-width:80px;height:1px;background:var(--border)}
-    .hero-eyebrow-txt{font-size:.7rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2)}
-    .hero-avatar-wrap{width:110px;height:110px;margin:0 auto 2rem;border-radius:12px;overflow:hidden;border:2px solid var(--accent2);position:relative;box-shadow:0 0 0 4px rgba(167,139,250,.15),0 8px 32px rgba(124,58,237,.3)}
-    .hero-avatar-ph{width:100%;height:100%;background:linear-gradient(135deg,var(--accent),#1e1b4b);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:#fff}
-    .hero-name{font-family:'Syne',sans-serif;font-size:4rem;font-weight:800;line-height:1.05;margin-bottom:.5rem;letter-spacing:-.02em;color:var(--tx)}
-    .hero-rule{width:80px;height:2px;background:var(--accent2);margin:.75rem auto}
-    .hero-title{color:var(--st);font-size:1rem;margin-bottom:.2rem}
-    .hero-loc{color:var(--st);font-size:.85rem;margin-bottom:2.5rem;opacity:.65}
-    .hero-actions{display:flex;gap:.75rem;flex-wrap:wrap;justify-content:center}
-    .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.6rem;border-radius:4px;font-size:.8rem;font-weight:600;cursor:pointer;border:none;transition:all .2s;text-decoration:none;text-transform:uppercase;letter-spacing:.06em}
-    .btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#6d28d9}
-    .btn-outline{background:transparent;color:var(--tx);border:1.5px solid var(--border)}.btn-outline:hover{border-color:var(--accent2);color:var(--accent2)}
-    
-    .section{padding:6rem 0;position:relative;z-index:1}
-    .section-inner{max-width:var(--max-w);margin:0 auto;padding:0 2rem;position:relative}
-    .section-tag{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.22em;color:var(--accent2);margin-bottom:.5rem;text-align:center;position:relative;z-index:1}
-    .section-title{font-family:'Syne',sans-serif;font-size:2.5rem;font-weight:800;color:var(--tx);text-align:center;margin-bottom:.5rem;line-height:1.15;position:relative;z-index:1;letter-spacing:-.015em}
-    .section-title span{color:var(--accent2)}
-    .divider{display:flex;align-items:center;gap:1rem;justify-content:center;margin-bottom:3rem;position:relative;z-index:1}
-    .divider::before,.divider::after{content:'';flex:1;max-width:60px;height:1px;background:var(--border)}
-    .divider-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2)}
-    
-    .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2rem;position:relative;z-index:1}
-    .proj-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:all .3s;text-align:center}
-    .proj-card:hover{border-color:var(--accent2);transform:translateY(-4px);box-shadow:0 12px 40px rgba(124,58,237,.15)}
-    .proj-body{padding:1.5rem;border-top:2px solid var(--accent)}
-    .proj-badge{display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);margin-bottom:.5rem}
-    .proj-name{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:.4rem;color:var(--tx)}
-    .proj-desc{color:var(--st);font-size:.82rem;line-height:1.65;margin-bottom:.65rem}
+    #admin-btn{
+      background:var(--accent);color:#fff;border:none;
+      padding:.45rem 1.1rem;border-radius:6px;cursor:pointer;
+      font-size:.82rem;font-weight:600;
+    }
 
-    footer{border-top:2px solid var(--border);text-align:center;padding:2.5rem;font-size:.8rem;color:var(--st);position:relative;z-index:1;letter-spacing:.05em;text-transform:uppercase}
-    @media(max-width:900px){#nav-links{display:none}#hamburger{display:flex}}
-    @media(max-width:600px){.hero-name{font-size:2.8rem}.section{padding:4rem 0}.section-title{font-size:1.9rem}.projects-grid{grid-template-columns:1fr}}
-  </style>
+    #hamburger{
+      display:none;flex-direction:column;justify-content:space-between;
+      width:24px;height:18px;background:none;border:none;cursor:pointer;
+    }
+    #hamburger span{display:block;height:2px;background:var(--tx);border-radius:2px}
 
-  <!-- OVERRIDE TEMA PAPER BLUE -->
-  <style>
-    /* Design 05 — Paper Blue */
-    :root{--accent:#2557a7;--accent2:#4b83d1;--tx:#1f3150;--st:#62728c;--bg:#edf4fb;--surface:#ffffff;--border:#b8cce2;--admin-bg:#ffffff;--admin-hd:#1c3d73;--max-w:960px}
-    body{font-family:'Work Sans',sans-serif;background-color:var(--bg);background-image:linear-gradient(135deg,rgba(37,87,167,.035) 25%,transparent 25%),linear-gradient(315deg,rgba(75,131,209,.035) 25%,transparent 25%);background-position:0 0,12px 12px;background-size:24px 24px}
-    .nav-brand,.hero-name,.section-title,.proj-name{font-family:'Cormorant Garamond',serif}
-    #nav{background:rgba(237,244,251,.94);border-bottom:2px solid var(--border)}
-    #admin-btn,.btn-primary{background:var(--accent)}
-    #hero{background:linear-gradient(135deg,#e6f0fa,#f8fbff);border-bottom:2px solid var(--border)}
-    #hero::before{content:'◌';font-family:'Cormorant Garamond',serif;color:rgba(37,87,167,.08);font-size:38vw}
-    .hero-avatar-wrap{width:126px;height:154px;border-radius:8px;border:10px solid #fff;outline:1px solid var(--border);box-shadow:12px 12px 0 rgba(37,87,167,.14);transform:rotate(-3deg)}
-    .hero-name{font-size:4.2rem}
-    .section-title{font-size:2.9rem}
-    .section-title span,.section-tag,.hero-eyebrow-txt,.proj-badge{color:var(--accent)}
-    .proj-card{border-radius:8px;background:#fff;box-shadow:6px 6px 0 rgba(37,87,167,.12)}
-    .proj-card:hover{border-color:var(--accent);transform:translate(-3px,-3px);box-shadow:9px 9px 0 rgba(37,87,167,.17)}
-    .proj-body{border-top:2px solid var(--accent)}
-    footer{border-top:2px solid var(--border)}
+    /* MOBILE MENU DRAWER */
+    #mobile-menu{display:none;position:fixed;inset:0;z-index:400}
+    #mobile-menu.open{display:block}
+    #mobile-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px)}
+    #mobile-drawer{
+      position:absolute;right:0;top:0;bottom:0;width:260px;
+      background:var(--surface);padding:1.5rem 1.25rem;
+      display:flex;flex-direction:column;gap:.3rem;overflow-y:auto;
+      border-left:1px solid var(--border);box-shadow:-4px 0 20px rgba(0,0,0,.15);
+    }
+    #mobile-drawer a{
+      color:var(--st);padding:.75rem 1rem;border-radius:6px;
+      font-size:.9rem;font-weight:500;display:flex;align-items:center;gap:.6rem;
+    }
+    #mobile-drawer a:hover{background:var(--bg);color:var(--accent)}
+    .mob-admin{
+      margin-top:1rem;background:var(--accent);color:#fff;
+      padding:.75rem;border-radius:6px;text-align:center;
+      font-weight:600;border:none;cursor:pointer;font-size:.9rem;width:100%;
+    }
+
+    /* HERO SECTION */
+    #hero{
+      position:relative;min-height:85vh;
+      display:flex;align-items:center;justify-content:center;
+      overflow:hidden;background:linear-gradient(135deg,#e6f0fa,#f8fbff);
+      border-bottom:2px solid var(--border);
+    }
+    .hero-inner{
+      max-width:var(--max-w);margin:0 auto;padding:5rem 2rem;
+      text-align:center;position:relative;z-index:1;width:100%;
+    }
+    .hero-avatar-wrap{
+      width:140px;height:140px;margin:0 auto 1.5rem;
+      border-radius:20px;overflow:hidden;
+      border:3px solid #fff;box-shadow:0 12px 30px rgba(37,87,167,.2);
+      background:#0d0b18;
+    }
+    .hero-avatar-wrap img{width:100%;height:100%;object-fit:cover}
+    .hero-name{
+      font-family:'Cormorant Garamond',serif;
+      font-size:3.8rem;font-weight:700;line-height:1.05;
+      margin-bottom:.5rem;color:var(--tx);
+    }
+    .hero-rule{width:80px;height:2px;background:var(--accent);margin:.75rem auto}
+    .hero-title{color:var(--st);font-size:1rem;margin-bottom:2rem}
+
+    .btn{
+      display:inline-flex;align-items:center;gap:.4rem;
+      padding:.65rem 1.6rem;border-radius:4px;font-size:.8rem;
+      font-weight:600;cursor:pointer;border:none;transition:all .2s;
+      text-decoration:none;text-transform:uppercase;letter-spacing:.06em;
+    }
+    .btn-primary{background:var(--accent);color:#fff}
+    .btn-outline{background:transparent;color:var(--tx);border:1.5px solid var(--border)}
+
+    footer{border-top:2px solid var(--border);text-align:center;padding:2.5rem;font-size:.8rem;color:var(--st);text-transform:uppercase}
+
+    @media(max-width:900px){
+      #nav-links{display:none}
+      #hamburger{display:flex}
+    }
+    @media(max-width:600px){
+      .hero-name{font-size:2.8rem}
+    }
 </style>
 </head>
 <body>
-<!-- NAVBAR UTAMA -->
 <nav id="nav">
-  <div class="nav-inner">
-    <!-- Diubah: Ditambahkan tag <img> logo toko/portofolio -->
-    <a href="#hero" class="nav-brand" style="display:flex; align-items:center; gap:0.5rem; text-decoration:none;">
-      <img src="logotoko.png" alt="Logo" class="nav-logo-img" style="width:32px; height:32px; border-radius:6px; object-fit:cover; border:1px solid var(--border);" onerror="this.style.display='none'"/>
-      <span><span class="brand-hi">Dwi</span> Syafitri</span>
-    </a>
+    <div class="nav-inner">
+      <a href="#hero" class="nav-brand">
+        <img src="logotoko.png" alt="Logo DS" class="nav-logo-img"/>
+        <span><span class="brand-hi">Dwi</span> Syafitri</span>
+      </a>
 
-    <div id="nav-links">
-      <a href="#hero" class="active">Beranda</a>
-      <a href="#about">Tentang</a>
-      <a href="#skills">Keahlian</a>
-      <a href="#projects">Proyek</a>
-      <a href="#experience">Pengalaman</a>
-      <a href="#education">Pendidikan</a>
-      <a href="#contact">Kontak</a>
+      <div id="nav-links">
+        <a href="#hero" class="active">Beranda</a>
+        <a href="#about">Tentang</a>
+        <a href="#skills">Keahlian</a>
+        <a href="#projects">Proyek</a>
+        <a href="#experience">Pengalaman</a>
+        <a href="#education">Pendidikan</a>
+        <a href="#contact">Kontak</a>
+      </div>
+
+      <div class="nav-right">
+        <button id="admin-btn" onclick="openAdmin()">⚙ Admin</button>
+        <button id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </div>
+  </nav>
 
-    <div class="nav-right">
-      <button id="admin-btn" onclick="openAdmin()">⚙ Admin</button>
-      <button id="hamburger" onclick="toggleMenu()" aria-label="Menu">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </div>
-</nav>
+  <!-- MENU MENU HP -->
+  <div id="mobile-menu">
+    <div id="mobile-backdrop" onclick="closeMenu()"></div>
+    <div id="mobile-drawer">
+      <div style="display:flex; align-items:center; gap:0.6rem; padding:.5rem 0 1rem; border-bottom:1px solid var(--border); margin-bottom:.5rem;">
+        <img src="logotoko.png" alt="Logo DS" style="width:32px; height:32px; border-radius:6px; object-fit:cover;"/>
+        <strong style="color:var(--tx);">Dwi Syafitri</strong>
+      </div>
 
-<!-- MENU TAMPILAN HP (MOBILE MENU) -->
-<div id="mobile-menu">
-  <div id="mobile-backdrop" onclick="closeMenu()"></div>
-  <div id="mobile-drawer">
-    <!-- Diubah: Header kecil di dalam drawer HP agar logo muncul di menu HP -->
-    <div style="display:flex; align-items:center; gap:0.5rem; padding:0.5rem 1rem 1rem; border-bottom:1px solid var(--border); margin-bottom:0.5rem;">
-      <img src="logotoko.png" alt="Logo" style="width:28px; height:28px; border-radius:4px; object-fit:cover;" onerror="this.style.display='none'"/>
-      <strong style="color:var(--tx);">Dwi Syafitri</strong>
-    </div>
-
-    <a href="#hero" onclick="closeMenu()">🏠 Beranda</a>
-    <a href="#about" onclick="closeMenu()">👤 Tentang</a>
-    <a href="#skills" onclick="closeMenu()">✨ Keahlian</a>
-    <a href="#projects" onclick="closeMenu()">📁 Proyek</a>
-    <a href="#experience" onclick="closeMenu()">💼 Pengalaman</a>
-    <a href="#education" onclick="closeMenu()">🏫 Pendidikan</a>
-    <a href="#contact" onclick="closeMenu()">✉ Kontak</a>
-    <button class="mob-admin" onclick="closeMenu();openAdmin()">⚙ Admin Panel</button>
-  </div>
-</div>
-<section id="hero">
-  <div class="hero-inner">
-    <div class="hero-eyebrow"><div class="hero-eyebrow-line"></div><span class="hero-eyebrow-txt">Portofolio Profesional</span><div class="hero-eyebrow-line"></div></div>
-    <div class="hero-avatar-wrap"><div id="hero-photo-wrap"></div></div>
-    <h1 class="hero-name" id="pub-name">&#8212;</h1>
-    <div class="hero-rule"></div>
-    <div class="hero-title" id="pub-title">&#8212;</div>
-    <div class="hero-loc" id="pub-loc"></div>
-    <div class="hero-actions">
-      <a id="pub-cv-btn" class="btn btn-primary" href="#" target="_blank">&#8595; Unduh CV</a>
-      <a href="#contact" class="btn btn-outline">&#9993; Hubungi</a>
+      <a href="#hero" onclick="closeMenu()">🏠 Beranda</a>
+      <a href="#about" onclick="closeMenu()">👤 Tentang</a>
+      <a href="#skills" onclick="closeMenu()">✨ Keahlian</a>
+      <a href="#projects" onclick="closeMenu()">📁 Proyek</a>
+      <a href="#experience" onclick="closeMenu()">💼 Pengalaman</a>
+      <a href="#education" onclick="closeMenu()">🏫 Pendidikan</a>
+      <a href="#contact" onclick="closeMenu()">✉ Kontak</a>
+      <button class="mob-admin" onclick="closeMenu();openAdmin()">⚙ Admin Panel</button>
     </div>
   </div>
-</section>
+
+  <!-- HERO SECTION -->
+  <section id="hero">
+    <div class="hero-inner">
+      <div class="hero-avatar-wrap">
+        <img src="logotoko.png" alt="Dwi Syafitri DS Logo"/>
+      </div>
+      <h1 class="hero-name">Dwi Syafitri</h1>
+      <div class="hero-rule"></div>
+      <p class="hero-title">Official Portfolio & Digital Showcase</p>
+
+      <div class="hero-actions">
+        <a href="#projects" class="btn btn-primary">Lihat Proyek</a>
+        <a href="#contact" class="btn btn-outline">Hubungi Saya</a>
+      </div>
+    </div>
+  </section>
 <section class="section" id="about"><div class="section-inner">
   <div class="section-num">01</div>
   <div class="section-tag">01 &#8212; Tentang</div>
