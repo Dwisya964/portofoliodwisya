@@ -1,11 +1,10 @@
-
 {
-  "name": "Portofolio Dwi Syafitri",
-  "short_name": "Dwi Syafitri",
+  "name": "Dwisyafitriproject",
+  "short_name": "Store",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#1c3d73",
-  "theme_color": "#1c3d73",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
   "icons": [
     {
       "src": "logotoko.png",
